@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.apollo.graphql)
 }
 
 android {
@@ -40,6 +41,16 @@ android {
     }
 }
 
+apollo {
+    service("service") {
+        packageName.set("no.brauterfallet")
+        introspection {
+            endpointUrl.set("https://api.entur.io/journey-planner/v3/graphql")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
+        }
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -53,6 +64,7 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.koin)
     implementation(libs.androidx.compose.material.icons)
+    implementation(libs.apollo.graphql)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

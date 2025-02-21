@@ -1,5 +1,6 @@
 package no.brauterfallet.myapplication.di
 
+import com.apollographql.apollo.ApolloClient
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
@@ -35,6 +36,10 @@ val appModule = module {
             }
         }
     }
+
+    single { ApolloClient.Builder()
+        .serverUrl("https://api.entur.io/journey-planner/v3/graphql")
+        .build() }
 
     singleOf(::GeocoderDataSourceImpl) { bind<GeocoderDataSource>() }
     singleOf(::JourneyPlannerDataSourceImpl) { bind<JourneyPlannerDataSource>() }

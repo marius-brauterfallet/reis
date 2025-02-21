@@ -1,0 +1,30 @@
+query VenueDepartures($id: String!) {
+    stopPlace(id: $id) {
+        id
+        name
+        estimatedCalls(arrivalDeparture: departures) {
+            realtime
+            aimedDepartureTime
+            expectedDepartureTime
+            actualDepartureTime
+            date
+            forBoarding
+            destinationDisplay {
+                frontText
+            }
+            quay {
+                id
+            }
+            serviceJourney {
+                journeyPattern {
+                    line {
+                        id
+                        name
+                        transportMode
+                        publicCode
+                    }
+                }
+            }
+        }
+    }
+}
