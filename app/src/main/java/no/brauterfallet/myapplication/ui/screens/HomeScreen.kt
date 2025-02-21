@@ -1,25 +1,44 @@
 package no.brauterfallet.myapplication.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import no.brauterfallet.myapplication.ui.theme.ReisTheme
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import no.brauterfallet.myapplication.ui.components.VenueCard
+import no.brauterfallet.myapplication.ui.components.VenueSearchBar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = koinViewModel()) {
-    Column(modifier = modifier) {
-        Text(viewModel.titleText, style = MaterialTheme.typography.titleLarge)
-    }
-}
+    val closestVenue by viewModel.closestVenue.collectAsStateWithLifecycle()
+    var searchBarText by rememberSaveable { mutableStateOf("") }
+    var searchBarExpanded by rememberSaveable { mutableStateOf(false) }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    ReisTheme {
-        HomeScreen()
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(8.dp)
+    ) {
+        VenueSearchBar(
+            searchBarText = searchBarText,
+            onQueryChange = { searchBarText = it.also { println(it) } },
+            expanded = searchBarExpanded,
+            onExpandedChange = { searchBarExpanded = it }
+        ) {
+            // TODO: Add search results here
+        }
+
+        HorizontalDivider()
+
+        closestVenue?.let { venue ->
+            VenueCard(venue)
+        }
     }
 }

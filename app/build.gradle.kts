@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.bundles.ktor.client)
     implementation(libs.koin)
+    implementation(libs.androidx.compose.material.icons)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

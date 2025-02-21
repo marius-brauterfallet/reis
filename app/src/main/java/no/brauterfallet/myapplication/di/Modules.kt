@@ -7,8 +7,9 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.engine.android.AndroidEngineConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
-import no.brauterfallet.myapplication.datasources.GeoCoderDataSource
-import no.brauterfallet.myapplication.datasources.GeoCoderDataSourceImpl
+import kotlinx.serialization.json.Json
+import no.brauterfallet.myapplication.datasources.GeocoderDataSource
+import no.brauterfallet.myapplication.datasources.GeocoderDataSourceImpl
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSource
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSourceImpl
 import no.brauterfallet.myapplication.repositories.AppRepository
@@ -28,12 +29,14 @@ val appModule = module {
     single {
         HttpClient(Android) {
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
             }
         }
     }
 
-    singleOf(::GeoCoderDataSourceImpl) { bind<GeoCoderDataSource>() }
+    singleOf(::GeocoderDataSourceImpl) { bind<GeocoderDataSource>() }
     singleOf(::JourneyPlannerDataSourceImpl) { bind<JourneyPlannerDataSource>() }
 
     singleOf(::AppRepositoryImpl) { bind<AppRepository>() }
