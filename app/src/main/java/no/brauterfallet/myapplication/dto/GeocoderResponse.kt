@@ -1,4 +1,4 @@
-package no.brauterfallet.myapplication.models
+package no.brauterfallet.myapplication.dto
 
 import kotlinx.serialization.Serializable
 

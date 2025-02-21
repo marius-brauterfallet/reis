@@ -11,6 +11,8 @@ composeBom = "2025.02.00"
 ktor-client = "3.1.0"
 koin = "4.0.2"
 apollo-graphql = "4.1.1"
+apollo-adapters = "0.0.4"
+kotlinx-datetime = "0.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,6 +30,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor-client" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor-client" }
@@ -38,6 +41,8 @@ koin = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref =
 koin-test = { group = "io.insert-koin", name = "koin-test-junit4", version.ref = "koin" }
 
 apollo-graphql = { group = "com.apollographql.apollo", name = "apollo-runtime", version.ref = "apollo-graphql" }
+apollo-adapters-core = { group = "com.apollographql.adapters", name = "apollo-adapters-core", version.ref = "apollo-adapters" }
+apollo-adapters-datetime = { group = "com.apollographql.adapters", name = "apollo-adapters-kotlinx-datetime", version.ref = "apollo-adapters" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -48,3 +53,4 @@ apollo-graphql = { id = "com.apollographql.apollo", version.ref = "apollo-graphq
 
 [bundles]
 ktor-client = ["ktor-client-core", "ktor-client-android", "ktor-client-content-negotiation", "ktor-serialization-json"]
+apollo-graphql = ["apollo-graphql", "apollo-adapters-core", "apollo-adapters-datetime"]

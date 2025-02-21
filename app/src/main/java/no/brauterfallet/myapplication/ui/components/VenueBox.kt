@@ -11,14 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import no.brauterfallet.myapplication.models.Venue
+import kotlinx.datetime.Clock
+import no.brauterfallet.myapplication.models.Departure
+import no.brauterfallet.myapplication.models.TransportationMode
+import no.brauterfallet.myapplication.dto.Venue
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun VenueCard(venue: Venue, modifier: Modifier = Modifier) {
+fun VenueCard(venue: Venue, departures: List<Departure>, modifier: Modifier = Modifier) {
     val distanceString =
         if (venue.distance > 1) "(%.1f km)".format(venue.distance)
         else "(${(venue.distance * 1000).roundToInt()} m)"
@@ -39,7 +43,7 @@ fun VenueCard(venue: Venue, modifier: Modifier = Modifier) {
 
             HorizontalDivider()
 
-            // TODO: Add lines here
+            departures.forEach { departure -> LineRow(departure) }
         }
     }
 }
@@ -48,6 +52,29 @@ fun VenueCard(venue: Venue, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 fun VenueCardPreview() {
     ReisTheme {
-        VenueCard(Venue("", "Jernbanetorget", 1.1534f))
+        VenueCard(
+            Venue("", "Jernbanetorget", 1.1534f), listOf(
+                Departure(
+                    lineNumber = "L14",
+                    transportationMode = TransportationMode.RAIL,
+                    destination = "Kongsvinger",
+                    expectedDeparture = Clock.System.now(),
+                    aimedDeparture = Clock.System.now(),
+                    actualDeparture = Clock.System.now(),
+                    color = Color("FFFF0000".toLong(16)),
+                    textColor = Color("FF000000".toLong(16)),
+                ),
+                Departure(
+                    lineNumber = "L14",
+                    transportationMode = TransportationMode.RAIL,
+                    destination = "Asker",
+                    expectedDeparture = Clock.System.now(),
+                    aimedDeparture = Clock.System.now(),
+                    actualDeparture = Clock.System.now(),
+                    color = Color("FFFF0000".toLong(16)),
+                    textColor = Color("FF000000".toLong(16))
+                )
+            )
+        )
     }
 }

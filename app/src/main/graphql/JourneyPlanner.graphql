@@ -1,13 +1,11 @@
 query VenueDepartures($id: String!) {
     stopPlace(id: $id) {
-        id
         name
         estimatedCalls(arrivalDeparture: departures) {
             realtime
             aimedDepartureTime
             expectedDepartureTime
             actualDepartureTime
-            date
             forBoarding
             destinationDisplay {
                 frontText
@@ -22,6 +20,10 @@ query VenueDepartures($id: String!) {
                         name
                         transportMode
                         publicCode
+                        presentation {
+                            colour
+                            textColour
+                        }
                     }
                 }
             }

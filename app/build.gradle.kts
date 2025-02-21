@@ -48,6 +48,12 @@ apollo {
             endpointUrl.set("https://api.entur.io/journey-planner/v3/graphql")
             schemaFile.set(file("src/main/graphql/schema.graphqls"))
         }
+
+        mapScalar(
+            "DateTime",
+            "kotlinx.datetime.Instant",
+            "com.apollographql.adapter.datetime.KotlinxInstantAdapter"
+        )
     }
 }
 
@@ -64,7 +70,8 @@ dependencies {
     implementation(libs.bundles.ktor.client)
     implementation(libs.koin)
     implementation(libs.androidx.compose.material.icons)
-    implementation(libs.apollo.graphql)
+    implementation(libs.bundles.apollo.graphql)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

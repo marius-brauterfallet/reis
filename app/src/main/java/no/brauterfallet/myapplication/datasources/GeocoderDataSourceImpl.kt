@@ -4,8 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.appendPathSegments
-import no.brauterfallet.myapplication.models.GeocoderResponse
-import no.brauterfallet.myapplication.models.Venue
+import no.brauterfallet.myapplication.dto.GeocoderResponse
+import no.brauterfallet.myapplication.dto.Venue
 
 class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataSource {
     companion object {
