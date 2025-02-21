@@ -11,19 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import no.brauterfallet.myapplication.di.appModule
+import no.brauterfallet.myapplication.ui.screens.HomeScreen
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        startKoin {
+            androidContext(this@MainActivity)
+            modules(appModule)
+        }
+
         setContent {
             ReisTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    HomeScreen(Modifier.padding(innerPadding))
                 }
             }
         }
