@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.bundles.apollo.graphql)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.navigation)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

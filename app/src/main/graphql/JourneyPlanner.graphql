@@ -8,12 +8,8 @@ query VenueDepartures($id: String!) {
             aimedDepartureTime
             expectedDepartureTime
             actualDepartureTime
-            forBoarding
             destinationDisplay {
                 frontText
-            }
-            quay {
-                id
             }
             serviceJourney {
                 journeyPattern {
