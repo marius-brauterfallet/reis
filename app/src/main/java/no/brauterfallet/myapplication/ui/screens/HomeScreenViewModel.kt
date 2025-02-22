@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,23 +23,26 @@ class HomeScreenViewModel(
     private val _departures = MutableStateFlow<List<Departure>>(emptyList())
     val departures = _departures
 
+    private val _isLoadingClosestVenue = MutableStateFlow(true)
+    val isLoadingClosestVenue = _isLoadingClosestVenue.asStateFlow()
+
     fun updateClosestVenue() {
         viewModelScope.launch {
+            _isLoadingClosestVenue.value = true
             val closestVenue = appRepository.getClosestVenue(59.927658f, 10.715266f).getOrElse {
+                _isLoadingClosestVenue.value = false
                 return@launch
             }
 
             _closestVenue.value = closestVenue
 
             val departures = appRepository.getDeparturesFromVenue(closestVenue.id).getOrElse {
+                _isLoadingClosestVenue.value = false
                 return@launch
             }
 
             _departures.value = departures
-
-            departures.forEach {
-                println("${it.lineNumber} - ${it.destination}")
-            }
+            _isLoadingClosestVenue.value = false
         }
     }
 }

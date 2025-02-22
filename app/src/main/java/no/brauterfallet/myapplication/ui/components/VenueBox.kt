@@ -3,8 +3,10 @@ package no.brauterfallet.myapplication.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,28 +24,49 @@ import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun VenueCard(venue: Venue, departures: List<Departure>, modifier: Modifier = Modifier) {
-    val distanceString =
+fun VenueCard(
+    venue: Venue?,
+    departures: List<Departure>,
+    isLoading: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val distanceString = venue?.let {
         if (venue.distance > 1) "(%.1f km)".format(venue.distance)
         else "(${(venue.distance * 1000).roundToInt()} m)"
+    } ?: ""
 
-    Card(modifier = modifier.padding(4.dp)) {
+    Card(modifier = modifier.padding(4.dp).fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.padding(8.dp).fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (venue == null) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+                } else {
+                    Text("Ingen stasjon er tilgjengelig")
+                }
+
+                return@Column
+            }
+
             Row(
                 modifier = Modifier.align(Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(venue.name, style = MaterialTheme.typography.titleMedium)
+                Text(venue.name, style = MaterialTheme.typography.labelLarge)
                 Text(text = distanceString, style = MaterialTheme.typography.labelMedium)
             }
 
             HorizontalDivider()
 
-            departures.forEach { departure -> LineRow(departure) }
+            if (isLoading && departures.isEmpty()) {
+                CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+            } else {
+                departures.forEach { departure -> LineRow(departure) }
+            }
         }
     }
 }
@@ -53,7 +76,8 @@ fun VenueCard(venue: Venue, departures: List<Departure>, modifier: Modifier = Mo
 fun VenueCardPreview() {
     ReisTheme {
         VenueCard(
-            Venue("", "Jernbanetorget", 1.1534f), listOf(
+            venue = Venue("", "Jernbanetorget", 1.1534f),
+            departures = listOf(
                 Departure(
                     lineNumber = "L14",
                     transportationMode = TransportationMode.RAIL,
@@ -74,7 +98,8 @@ fun VenueCardPreview() {
                     color = Color("FFFF0000".toLong(16)),
                     textColor = Color("FF000000".toLong(16))
                 )
-            )
+            ),
+            isLoading = false
         )
     }
 }

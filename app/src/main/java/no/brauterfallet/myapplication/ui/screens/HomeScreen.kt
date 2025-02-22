@@ -22,6 +22,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = koinViewModel()) {
     val closestVenue by viewModel.closestVenue.collectAsStateWithLifecycle()
     val departures by viewModel.departures.collectAsStateWithLifecycle()
+    val isLoadingClosestVenue by viewModel.isLoadingClosestVenue.collectAsStateWithLifecycle()
 
     var searchBarText by rememberSaveable { mutableStateOf("") }
     var searchBarExpanded by rememberSaveable { mutableStateOf(false) }
@@ -44,9 +45,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            closestVenue?.let { venue ->
-                VenueCard(venue, departures)
-            }
+            VenueCard(closestVenue, departures, isLoadingClosestVenue)
         }
     }
 }
