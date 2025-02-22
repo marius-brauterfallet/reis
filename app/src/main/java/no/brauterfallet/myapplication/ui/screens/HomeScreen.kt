@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +20,7 @@ import no.brauterfallet.myapplication.ui.components.VenueCard
 import no.brauterfallet.myapplication.ui.components.VenueSearchBar
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = koinViewModel()) {
     val closestVenue by viewModel.closestVenue.collectAsStateWithLifecycle()
@@ -26,6 +29,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
 
     var searchBarText by rememberSaveable { mutableStateOf("") }
     var searchBarExpanded by rememberSaveable { mutableStateOf(false) }
+    var isRefreshing by rememberSaveable { mutableStateOf(false) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -42,10 +46,18 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
 
         HorizontalDivider()
 
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
+        PullToRefreshBox(
+            isRefreshing = isLoadingClosestVenue,
+            onRefresh = {
+                isRefreshing = isLoadingClosestVenue
+                viewModel.updateClosestVenue()
+            }
         ) {
-            VenueCard(closestVenue, departures, isLoadingClosestVenue)
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                VenueCard(closestVenue, departures, isLoadingClosestVenue)
+            }
         }
     }
 }
