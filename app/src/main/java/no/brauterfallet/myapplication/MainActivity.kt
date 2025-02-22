@@ -1,6 +1,5 @@
 package no.brauterfallet.myapplication
 
-import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +18,7 @@ import no.brauterfallet.myapplication.di.appModule
 import no.brauterfallet.myapplication.ui.screens.HomeScreen
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
@@ -27,9 +27,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        startKoin {
-            androidContext(this@MainActivity)
-            modules(appModule)
+        if (GlobalContext.getOrNull() == null) {
+            startKoin {
+                androidContext(this@MainActivity)
+                modules(appModule)
+            }
         }
 
         setContent {
