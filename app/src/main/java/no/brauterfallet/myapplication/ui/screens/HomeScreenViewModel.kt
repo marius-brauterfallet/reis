@@ -7,13 +7,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.brauterfallet.myapplication.datasources.GeocoderDataSource
 import no.brauterfallet.myapplication.dto.Venue
 import no.brauterfallet.myapplication.models.Departure
 import no.brauterfallet.myapplication.repositories.AppRepository
 
 class HomeScreenViewModel(
-    private val geocoderDataSource: GeocoderDataSource,
     private val appRepository: AppRepository
 ) : ViewModel() {
     private val _closestVenue = MutableStateFlow<Venue?>(null)
@@ -27,18 +25,20 @@ class HomeScreenViewModel(
     fun updateClosestVenue() {
         viewModelScope.launch {
             val closestVenue = appRepository.getClosestVenue(59.927658f, 10.715266f).getOrElse {
-                println("Something bad happened")
                 return@launch
             }
 
             _closestVenue.value = closestVenue
 
             val departures = appRepository.getDeparturesFromVenue(closestVenue.id).getOrElse {
-                println("Something bad happened again")
                 return@launch
             }
 
             _departures.value = departures
+
+            departures.forEach {
+                println("${it.lineNumber} - ${it.destination}")
+            }
         }
     }
 }

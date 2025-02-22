@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
+import no.brauterfallet.myapplication.dto.Venue
 import no.brauterfallet.myapplication.models.Departure
 import no.brauterfallet.myapplication.models.TransportationMode
-import no.brauterfallet.myapplication.dto.Venue
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import kotlin.math.roundToInt
 

@@ -3,6 +3,8 @@ package no.brauterfallet.myapplication.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,8 +41,12 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
 
         HorizontalDivider()
 
-        closestVenue?.let { venue ->
-            VenueCard(venue, departures)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            closestVenue?.let { venue ->
+                VenueCard(venue, departures)
+            }
         }
     }
 }
