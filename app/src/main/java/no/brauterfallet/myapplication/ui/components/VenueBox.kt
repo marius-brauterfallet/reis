@@ -53,7 +53,7 @@ fun VenueCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(venue.name, style = MaterialTheme.typography.labelLarge)
+                Text(venue.name, style = MaterialTheme.typography.titleMedium)
                 Text(text = distanceString, style = MaterialTheme.typography.labelMedium)
             }
 
@@ -69,7 +69,7 @@ fun VenueCard(
 fun VenueCardPreview() {
     ReisTheme {
         VenueCard(
-            venue = Venue("", "Jernbanetorget", 1.1534f),
+            venue = Venue("", "Jernbanetorget", 1.1534f, "venue"),
             departures = listOf(
                 Departure(
                     lineNumber = "L14",

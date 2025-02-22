@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.bundles.apollo.graphql)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.navigation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

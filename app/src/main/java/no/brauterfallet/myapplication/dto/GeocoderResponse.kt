@@ -17,4 +17,5 @@ data class Venue(
     val id: String,
     val name: String,
     val distance: Float,
+    val layer: String
 )

@@ -26,4 +26,16 @@ class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataS
             }.body<GeocoderResponse>().features.first().properties
         }
     }
+
+    override suspend fun getVenuesByTextQuery(query: String): Result<List<Venue>> {
+        return runCatching {
+            httpClient.get(GEOCODER_URL) {
+                url {
+                    appendPathSegments("autocomplete")
+                }
+            }.body<GeocoderResponse>().features
+                .filter { feature -> feature.properties.layer == "venue" }
+                .map { feature -> feature.properties }
+        }
+    }
 }

@@ -15,6 +15,10 @@ class AppRepositoryImpl(
         return geoCoderDataSource.getClosestVenue(latitude, longitude)
     }
 
+    override suspend fun getVenuesByTextQuery(query: String): Result<List<Venue>> {
+        return geoCoderDataSource.getVenuesByTextQuery(query)
+    }
+
     override suspend fun getDeparturesFromVenue(venueId: String): Result<List<Departure>> {
         val departuresQuery = journeyPlannerDataSource.getDeparturesFromVenue(venueId).getOrElse {
             return Result.failure(it)
@@ -32,13 +36,11 @@ class AppRepositoryImpl(
 
             val color =
                 estimatedCall.serviceJourney.journeyPattern?.line?.presentation?.colour?.let { colorString ->
-                    println(colorString)
                     Color("FF$colorString".toLong(16))
                 }
 
             val textColor =
                 estimatedCall.serviceJourney.journeyPattern?.line?.presentation?.textColour?.let { colorString ->
-                    println(colorString)
                     Color("FF$colorString".toLong(16))
                 }
 
