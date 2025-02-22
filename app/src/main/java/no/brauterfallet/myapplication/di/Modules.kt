@@ -16,6 +16,8 @@ import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSource
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSourceImpl
 import no.brauterfallet.myapplication.repositories.AppRepository
 import no.brauterfallet.myapplication.repositories.AppRepositoryImpl
+import no.brauterfallet.myapplication.services.LocationService
+import no.brauterfallet.myapplication.services.LocationServiceImpl
 import no.brauterfallet.myapplication.ui.screens.HomeScreenViewModel
 import no.brauterfallet.myapplication.ui.screens.SearchScreenViewModel
 import org.koin.core.module.dsl.bind
@@ -50,6 +52,8 @@ fun appModule(fusedLocationProviderClient: FusedLocationProviderClient) = module
     singleOf(::JourneyPlannerDataSourceImpl) { bind<JourneyPlannerDataSource>() }
 
     singleOf(::AppRepositoryImpl) { bind<AppRepository>() }
+
+    singleOf(::LocationServiceImpl) { bind<LocationService>() }
 
     single { fusedLocationProviderClient }
 }

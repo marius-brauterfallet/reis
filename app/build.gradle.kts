@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.navigation)
     implementation(libs.play.services.location)
+    implementation(libs.accompanist)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

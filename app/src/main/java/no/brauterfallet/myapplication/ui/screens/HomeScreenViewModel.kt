@@ -1,48 +1,61 @@
 package no.brauterfallet.myapplication.ui.screens
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.brauterfallet.myapplication.dto.Venue
 import no.brauterfallet.myapplication.models.Departure
 import no.brauterfallet.myapplication.repositories.AppRepository
+import no.brauterfallet.myapplication.services.LocationService
 
 class HomeScreenViewModel(
-    private val appRepository: AppRepository
+    private val appRepository: AppRepository,
+    private val locationService: LocationService
 ) : ViewModel() {
-    private val _closestVenue = MutableStateFlow<Venue?>(null)
-    val closestVenue = _closestVenue
-        .onStart { updateClosestVenue() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    private val _venue = MutableStateFlow<Venue?>(null)
+    val venue = _venue.asStateFlow()
 
     private val _departures = MutableStateFlow<List<Departure>>(emptyList())
-    val departures = _departures
+    val departures = _departures.asStateFlow()
 
-    private val _isLoadingClosestVenue = MutableStateFlow(true)
-    val isLoadingClosestVenue = _isLoadingClosestVenue.asStateFlow()
+    private val _homeScreenState = MutableStateFlow(HomeScreenState.OK)
+    val homeScreenState = _homeScreenState.asStateFlow()
 
-    fun updateClosestVenue() {
+    fun onRefresh(context: Context) {
+        updateClosestVenue(context)
+    }
+
+    fun updateClosestVenue(context: Context) {
+        _homeScreenState.value = HomeScreenState.IS_LOADING
+
         viewModelScope.launch {
-            _isLoadingClosestVenue.value = true
-            val closestVenue = appRepository.getClosestVenue(59.927658f, 10.715266f).getOrElse {
-                _isLoadingClosestVenue.value = false
+            val location = locationService.getLocation(context)
+
+            if (location == null) {
+                _homeScreenState.value = HomeScreenState.FETCHING_LOCATION_FAILED
                 return@launch
             }
 
-            _closestVenue.value = closestVenue
+            val closestVenue = appRepository.getClosestVenue(
+                location.latitude.toFloat(),
+                location.longitude.toFloat()
+            ).getOrElse {
+                _homeScreenState.value = HomeScreenState.FETCHING_DATA_FAILED
+                return@launch
+            }
+
+            _venue.value = closestVenue
 
             val departures = appRepository.getDeparturesFromVenue(closestVenue.id).getOrElse {
-                _isLoadingClosestVenue.value = false
+                _homeScreenState.value = HomeScreenState.FETCHING_DATA_FAILED
                 return@launch
             }
 
             _departures.value = departures
-            _isLoadingClosestVenue.value = false
+            _homeScreenState.value = HomeScreenState.OK
         }
     }
 }
