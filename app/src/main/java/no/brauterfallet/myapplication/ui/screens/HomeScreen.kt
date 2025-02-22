@@ -22,42 +22,20 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
     val departures by viewModel.departures.collectAsStateWithLifecycle()
     val isLoadingClosestVenue by viewModel.isLoadingClosestVenue.collectAsStateWithLifecycle()
 
-//    var searchBarText by rememberSaveable { mutableStateOf("") }
-//    var searchBarExpanded by rememberSaveable { mutableStateOf(false) }
     var isRefreshing by rememberSaveable { mutableStateOf(false) }
 
-//    Column(
-//        verticalArrangement = Arrangement.spacedBy(8.dp),
-//        modifier = modifier.padding(8.dp)
-//    ) {
-//        VenueSearchBar(
-//            searchBarText = searchBarText,
-//            onQueryChange = {
-//                searchBarText = it
-//
-//            },
-//            expanded = searchBarExpanded,
-//            onExpandedChange = {
-//                searchBarExpanded = it
-//                if (!it) searchBarText = ""
-//            }
-//        ) {
-//            // TODO: Add search results here
-//        }
-
-        PullToRefreshBox(
-            isRefreshing = isLoadingClosestVenue,
-            onRefresh = {
-                isRefreshing = isLoadingClosestVenue
-                viewModel.updateClosestVenue()
-            },
-            modifier = modifier
+    PullToRefreshBox(
+        isRefreshing = isLoadingClosestVenue,
+        onRefresh = {
+            isRefreshing = isLoadingClosestVenue
+            viewModel.updateClosestVenue()
+        },
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                VenueCard(closestVenue, departures, isLoadingClosestVenue)
-            }
+            VenueCard(closestVenue, departures)
         }
-//    }
+    }
 }

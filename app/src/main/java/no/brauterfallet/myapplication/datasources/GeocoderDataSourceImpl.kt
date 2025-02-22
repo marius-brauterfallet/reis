@@ -32,10 +32,12 @@ class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataS
             httpClient.get(GEOCODER_URL) {
                 url {
                     appendPathSegments("autocomplete")
+                    parameters.append("text", query)
+                    parameters.append("size", "10")
+                    parameters.append("lang", "no")
+                    parameters.append("layers", "venue")
                 }
-            }.body<GeocoderResponse>().features
-                .filter { feature -> feature.properties.layer == "venue" }
-                .map { feature -> feature.properties }
-        }
+            }.body<GeocoderResponse>().features.map { feature -> feature.properties }
+        }.onFailure { println(it) }
     }
 }

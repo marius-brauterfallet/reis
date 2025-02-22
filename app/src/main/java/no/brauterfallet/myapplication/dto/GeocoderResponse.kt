@@ -9,13 +9,19 @@ data class GeocoderResponse(
 
 @Serializable
 data class Feature(
-    val properties: Venue
+    val properties: Venue,
+    val geometry: Geometry
 )
 
 @Serializable
 data class Venue(
     val id: String,
     val name: String,
-    val distance: Float,
+    val distance: Float? = null,
     val layer: String
+)
+
+@Serializable
+data class Geometry(
+    val coordinates: List<Float>
 )

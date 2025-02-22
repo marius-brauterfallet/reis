@@ -26,12 +26,11 @@ import kotlin.math.roundToInt
 fun VenueCard(
     venue: Venue?,
     departures: List<Departure>,
-    isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val distanceString = venue?.let {
-        if (venue.distance > 1) "(%.1f km)".format(venue.distance)
-        else "(${(venue.distance * 1000).roundToInt()} m)"
+    val distanceString = venue?.distance?.let { distance ->
+        if (distance > 1) "(%.1f km)".format(distance)
+        else "(${(distance * 1000).roundToInt()} m)"
     } ?: ""
 
     Card(modifier = modifier.padding(4.dp).fillMaxWidth()) {
@@ -40,13 +39,7 @@ fun VenueCard(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (venue == null) {
-                if (!isLoading) {
-                    Text("Ingen stasjon er tilgjengelig")
-                }
-
-                return@Column
-            }
+            if (venue == null) return@Column
 
             Row(
                 modifier = Modifier.align(Alignment.Start),
@@ -91,8 +84,7 @@ fun VenueCardPreview() {
                     color = Color("FFFF0000".toLong(16)),
                     textColor = Color("FF000000".toLong(16))
                 )
-            ),
-            isLoading = false
+            )
         )
     }
 }

@@ -16,6 +16,7 @@ import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSourceImpl
 import no.brauterfallet.myapplication.repositories.AppRepository
 import no.brauterfallet.myapplication.repositories.AppRepositoryImpl
 import no.brauterfallet.myapplication.ui.screens.HomeScreenViewModel
+import no.brauterfallet.myapplication.ui.screens.SearchScreenViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -23,6 +24,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModelOf(::HomeScreenViewModel)
+    viewModelOf(::SearchScreenViewModel)
 
     single<HttpClientEngine> { Android.create() }
     single<HttpClientConfig<AndroidEngineConfig>> { HttpClientConfig() }
