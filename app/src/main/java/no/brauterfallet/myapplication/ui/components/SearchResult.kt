@@ -16,7 +16,7 @@ fun SearchResult(venue: Venue, onClick: (Venue) -> Unit, modifier: Modifier = Mo
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp, 12.dp)) {
-            Text(text = venue.name)
+            Text(text = venue.label)
         }
     }
 }

@@ -18,7 +18,8 @@ data class Venue(
     val id: String,
     val name: String,
     val distance: Float? = null,
-    val layer: String
+    val layer: String,
+    val label: String
 )
 
 @Serializable

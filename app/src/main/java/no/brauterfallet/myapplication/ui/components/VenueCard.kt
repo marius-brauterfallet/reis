@@ -62,7 +62,7 @@ fun VenueCard(
 fun VenueCardPreview() {
     ReisTheme {
         VenueCard(
-            venue = Venue("", "Jernbanetorget", 1.1534f, "venue"),
+            venue = Venue("", "Jernbanetorget", 1.1534f, "venue", "Jernbanetorget, Oslo"),
             departures = listOf(
                 Departure(
                     lineNumber = "L14",
