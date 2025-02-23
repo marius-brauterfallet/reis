@@ -1,11 +1,13 @@
 package no.brauterfallet.myapplication.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,7 +21,7 @@ import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun VenueCard(
+fun VenueBox(
     venue: VenueWithDepartures,
     modifier: Modifier = Modifier
 ) {
@@ -28,9 +30,18 @@ fun VenueCard(
         else "(${(distance).roundToInt()} m)"
     } ?: ""
 
-    Card(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = CardDefaults.shape
+            )
+    ) {
         Column(
-            modifier = Modifier.padding(8.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -45,7 +56,11 @@ fun VenueCard(
 
             HorizontalDivider()
 
-            venue.lines.forEach { line -> LineRow(line) }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                venue.lines.forEach { line -> LineRow(line) }
+            }
         }
     }
 }
@@ -54,6 +69,6 @@ fun VenueCard(
 @Preview(showBackground = true)
 fun VenueCardPreview() {
     ReisTheme {
-//        VenueCard()
+
     }
 }

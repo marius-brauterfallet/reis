@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.brauterfallet.myapplication.ui.components.SearchResult
-import no.brauterfallet.myapplication.ui.components.VenueCard
+import no.brauterfallet.myapplication.ui.components.VenueBox
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,7 +93,7 @@ fun SearchScreen(
             ) {
                 if (venueWithDepartures != null) {
                     venueWithDepartures?.let { venue ->
-                        VenueCard(
+                        VenueBox(
                             venue = venue,
                             modifier = Modifier
                                 .padding(16.dp, 4.dp)

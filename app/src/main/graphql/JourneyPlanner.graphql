@@ -2,8 +2,8 @@ query VenueDepartures($id: String!) {
     stopPlace(id: $id) {
         estimatedCalls(
             arrivalDeparture: departures
-            numberOfDeparturesPerLineAndDestinationDisplay: 1
-            numberOfDepartures: 20
+            numberOfDeparturesPerLineAndDestinationDisplay: 0
+            numberOfDepartures: 50
         ) {
             aimedDepartureTime
             expectedDepartureTime

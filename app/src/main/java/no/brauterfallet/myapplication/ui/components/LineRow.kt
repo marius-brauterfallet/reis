@@ -2,6 +2,7 @@ package no.brauterfallet.myapplication.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Subway
 import androidx.compose.material.icons.filled.Train
 import androidx.compose.material.icons.filled.Tram
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,59 +42,93 @@ import no.brauterfallet.myapplication.ui.theme.ReisTheme
 
 @Composable
 fun LineRow(line: Line) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp, 4.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+    val currentDeparture = line.departures.first()
+    val nextDepartures = line.departures.drop(1).take(3)
+    val timeTextStyle = MaterialTheme.typography.labelMedium
+
+    val expectedDepartureTruncated =
+        currentDeparture.expectedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
+            .let { LocalTime(it.hour, it.minute) }
+    val aimedDepartureTruncated =
+        currentDeparture.aimedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
+            .let { LocalTime(it.hour, it.minute) }
+
+    val departuresDiffer = expectedDepartureTruncated != aimedDepartureTruncated
+
+    Card {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            LineNumberBox(line)
-            Text(
-                text = line.destination ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-        }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    LineNumberBox(line)
+                    Text(
+                        text = line.destination ?: "",
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 4.dp)
-        ) {
-            val departure = line.departures.first()
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(start = 4.dp)
+                ) {
+                    if (departuresDiffer) {
+                        Text(
+                            text = aimedDepartureTruncated
+                                .format(LocalTime.Format { hour(); char(':'); minute() }),
+                            style = timeTextStyle.copy(textDecoration = TextDecoration.LineThrough),
+                            maxLines = 1
+                        )
+                    }
 
-            val expectedDepartureTruncated =
-                departure.expectedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
-                    .let { LocalTime(it.hour, it.minute) }
-            val aimedDepartureTruncated =
-                departure.aimedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
-                    .let { LocalTime(it.hour, it.minute) }
+                    Text(
+                        text = expectedDepartureTruncated
+                            .format(LocalTime.Format { hour(); char(':'); minute() }),
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1
+                    )
+                }
+            }
 
-            val departuresDiffer = expectedDepartureTruncated != aimedDepartureTruncated
+            if (nextDepartures.any()) {
+                HorizontalDivider()
 
-            val timeTextStyle = MaterialTheme.typography.labelMedium
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Neste avganger:", style = timeTextStyle)
 
-            Text(
-                text = aimedDepartureTruncated.format(LocalTime.Format { hour(); char(':'); minute() }),
-                style = if (departuresDiffer) timeTextStyle.copy(textDecoration = TextDecoration.LineThrough) else timeTextStyle,
-                maxLines = 1
-            )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                    ) {
+                        nextDepartures.forEach { departure ->
+                            val departureText = departure.expectedDeparture
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .let { LocalTime(it.hour, it.minute) }
+                                .format(LocalTime.Format { hour(); char(':'); minute() })
 
-            if (departuresDiffer) {
-                Text(
-                    text = expectedDepartureTruncated.format(LocalTime.Format { hour(); char(':'); minute() }),
-                    style = timeTextStyle,
-                    maxLines = 1
-                )
+                            Text(text = departureText, style = timeTextStyle)
+                        }
+                    }
+                }
+
             }
         }
-
-
     }
 }
 

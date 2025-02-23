@@ -23,7 +23,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.brauterfallet.myapplication.ui.components.LocationRequestCard
-import no.brauterfallet.myapplication.ui.components.VenueCard
+import no.brauterfallet.myapplication.ui.components.VenueBox
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -69,7 +69,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
                 HomeScreenState.OK -> {
                     if (venue != null) {
                         venue?.let {
-                            VenueCard(
+                            VenueBox(
                                 venue = it,
                                 modifier = Modifier
                                     .padding(16.dp, 4.dp)
