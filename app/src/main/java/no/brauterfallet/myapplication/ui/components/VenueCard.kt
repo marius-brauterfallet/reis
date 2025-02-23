@@ -33,7 +33,7 @@ fun VenueCard(
         else "(${(distance * 1000).roundToInt()} m)"
     } ?: ""
 
-    Card(modifier = modifier.padding(4.dp).fillMaxWidth()) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(8.dp).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),

@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
@@ -48,15 +49,20 @@ fun LineRow(departure: Departure) {
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
         ) {
             LineNumberBox(departure)
-            Text(departure.destination ?: "")
+            Text(
+                text = departure.destination ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 4.dp)
         ) {
             val expectedDepartureTruncated =
                 departure.expectedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -72,12 +78,14 @@ fun LineRow(departure: Departure) {
             Text(
                 text = aimedDepartureTruncated.format(LocalTime.Format { hour(); char(':'); minute() }),
                 style = if (departuresDiffer) timeTextStyle.copy(textDecoration = TextDecoration.LineThrough) else timeTextStyle,
+                maxLines = 1
             )
 
             if (departuresDiffer) {
                 Text(
                     text = expectedDepartureTruncated.format(LocalTime.Format { hour(); char(':'); minute() }),
-                    style = timeTextStyle
+                    style = timeTextStyle,
+                    maxLines = 1
                 )
             }
         }
@@ -91,13 +99,15 @@ fun LineNumberBox(departure: Departure) {
     val icon = when (departure.transportationMode) {
         TransportationMode.AIR -> Icons.Default.AirplanemodeActive
         TransportationMode.BICYCLE -> Icons.Default.PedalBike
-        TransportationMode.BUS -> Icons.Default.DirectionsBus
         TransportationMode.WATER -> Icons.Default.DirectionsBoat
         TransportationMode.RAIL -> Icons.Default.Train
         TransportationMode.METRO -> Icons.Default.Subway
         TransportationMode.TAXI -> Icons.Default.LocalTaxi
         TransportationMode.TRAM -> Icons.Default.Tram
-        TransportationMode.TROLLEYBUS -> Icons.Default.DirectionsBus
+        TransportationMode.COACH,
+        TransportationMode.TROLLEYBUS,
+        TransportationMode.BUS -> Icons.Default.DirectionsBus
+
         else -> Icons.Default.QuestionMark
     }
 
@@ -112,7 +122,7 @@ fun LineNumberBox(departure: Departure) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(icon, contentDescription = null, tint = textColor)
-        Text(departure.lineNumber ?: "???", color = textColor)
+        Text(departure.lineNumber ?: "", color = textColor)
     }
 }
 

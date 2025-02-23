@@ -1,8 +1,9 @@
-package no.brauterfallet.myapplication.ui.screens
+package no.brauterfallet.myapplication.ui.screens.home
 
 import android.Manifest
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -15,10 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import no.brauterfallet.myapplication.ui.components.LocationRequestCard
 import no.brauterfallet.myapplication.ui.components.VenueCard
 import org.koin.androidx.compose.koinViewModel
@@ -26,22 +28,25 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = koinViewModel()) {
-    val locationPermissionState = rememberPermissionState(
-        Manifest.permission.ACCESS_COARSE_LOCATION
+    val locationPermissionsState = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
     )
 
-    if (!locationPermissionState.status.isGranted) {
+    if (locationPermissionsState.permissions.none { it.status.isGranted }) {
         Box(modifier = modifier.fillMaxSize()) {
             LocationRequestCard(
                 modifier = Modifier.align(Alignment.Center),
-                onClick = { locationPermissionState.launchPermissionRequest() })
+                onClick = { locationPermissionsState.launchMultiplePermissionRequest() })
         }
         return
     }
 
     val context = LocalContext.current
-    LaunchedEffect(locationPermissionState) {
-        viewModel.updateClosestVenue(context)
+    LaunchedEffect(locationPermissionsState) {
+        viewModel.updateClosestVenue(context, initialLoad = true)
     }
 
     val homeScreenState by viewModel.homeScreenState.collectAsStateWithLifecycle()
@@ -51,7 +56,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
     val departures by viewModel.departures.collectAsStateWithLifecycle()
 
     PullToRefreshBox(
-        isRefreshing = homeScreenState == HomeScreenState.IS_LOADING,
+        isRefreshing = homeScreenState == HomeScreenState.IS_REFRESHING,
         onRefresh = { viewModel.onRefresh(context) },
         modifier = modifier.fillMaxSize()
     ) {
@@ -62,10 +67,17 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
         ) {
             when (homeScreenState) {
                 HomeScreenState.OK -> {
-                    VenueCard(venue, departures, modifier = Modifier.fillMaxSize())
+                    VenueCard(
+                        venue,
+                        departures,
+                        modifier = Modifier
+                            .padding(16.dp, 4.dp)
+                            .fillMaxSize()
+                    )
                 }
 
-                HomeScreenState.IS_LOADING -> {
+                HomeScreenState.IS_LOADING,
+                HomeScreenState.IS_REFRESHING -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 

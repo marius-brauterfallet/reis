@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import no.brauterfallet.myapplication.ui.screens.HomeScreen
-import no.brauterfallet.myapplication.ui.screens.MiscellaneousScreen
-import no.brauterfallet.myapplication.ui.screens.SearchScreen
+import no.brauterfallet.myapplication.ui.screens.home.HomeScreen
+import no.brauterfallet.myapplication.ui.screens.misc.MiscellaneousScreen
+import no.brauterfallet.myapplication.ui.screens.search.SearchScreen
 
 sealed class Destination(val route: String) {
     data object Home : Destination("Home")

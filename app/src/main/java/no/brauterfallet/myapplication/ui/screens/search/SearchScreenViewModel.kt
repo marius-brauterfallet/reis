@@ -1,4 +1,4 @@
-package no.brauterfallet.myapplication.ui.screens
+package no.brauterfallet.myapplication.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +27,8 @@ class SearchScreenViewModel(private val appRepository: AppRepository) : ViewMode
     private val _expanded = MutableStateFlow(false)
     val expanded = _expanded.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     fun onExpandedChange(value: Boolean) {
         _expanded.value = value
@@ -40,12 +42,27 @@ class SearchScreenViewModel(private val appRepository: AppRepository) : ViewMode
 
     fun onVenueClick(venue: Venue) {
         _query.value = ""
+        _searchResultVenues.value = emptyList()
         _expanded.value = false
         _selectedVenue.value = venue
 
-        viewModelScope.launch {
-            _departures.value =
-                appRepository.getDeparturesFromVenue(venue.id).getOrDefault(emptyList())
+        refreshDepartures()
+    }
+
+    fun onRefresh() {
+        refreshDepartures()
+    }
+
+    private fun refreshDepartures() {
+        _selectedVenue.value?.let { venue ->
+            _isLoading.value = true
+
+            viewModelScope.launch {
+                _departures.value =
+                    appRepository.getDeparturesFromVenue(venue.id).getOrDefault(emptyList())
+
+                _isLoading.value = false
+            }
         }
     }
 

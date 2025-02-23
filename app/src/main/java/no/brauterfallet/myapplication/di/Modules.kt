@@ -18,8 +18,8 @@ import no.brauterfallet.myapplication.repositories.AppRepository
 import no.brauterfallet.myapplication.repositories.AppRepositoryImpl
 import no.brauterfallet.myapplication.services.LocationService
 import no.brauterfallet.myapplication.services.LocationServiceImpl
-import no.brauterfallet.myapplication.ui.screens.HomeScreenViewModel
-import no.brauterfallet.myapplication.ui.screens.SearchScreenViewModel
+import no.brauterfallet.myapplication.ui.screens.home.HomeScreenViewModel
+import no.brauterfallet.myapplication.ui.screens.search.SearchScreenViewModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf

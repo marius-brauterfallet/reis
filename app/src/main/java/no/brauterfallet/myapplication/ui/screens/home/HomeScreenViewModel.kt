@@ -1,4 +1,4 @@
-package no.brauterfallet.myapplication.ui.screens
+package no.brauterfallet.myapplication.ui.screens.home
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -28,8 +28,9 @@ class HomeScreenViewModel(
         updateClosestVenue(context)
     }
 
-    fun updateClosestVenue(context: Context) {
-        _homeScreenState.value = HomeScreenState.IS_LOADING
+    fun updateClosestVenue(context: Context, initialLoad: Boolean = false) {
+        _homeScreenState.value =
+            if (initialLoad) HomeScreenState.IS_LOADING else HomeScreenState.IS_REFRESHING
 
         viewModelScope.launch {
             val location = locationService.getLocation(context)
