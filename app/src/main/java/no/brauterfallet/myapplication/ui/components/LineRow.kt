@@ -28,18 +28,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import no.brauterfallet.myapplication.models.Departure
+import no.brauterfallet.myapplication.models.Line
 import no.brauterfallet.myapplication.models.TransportationMode
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
 
 @Composable
-fun LineRow(departure: Departure) {
+fun LineRow(line: Line) {
     Row(
         modifier = Modifier
             .padding(8.dp, 4.dp)
@@ -52,9 +51,9 @@ fun LineRow(departure: Departure) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f)
         ) {
-            LineNumberBox(departure)
+            LineNumberBox(line)
             Text(
-                text = departure.destination ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis,
+                text = line.destination ?: "", maxLines = 2, overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -64,6 +63,8 @@ fun LineRow(departure: Departure) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(start = 4.dp)
         ) {
+            val departure = line.departures.first()
+
             val expectedDepartureTruncated =
                 departure.expectedDeparture.toLocalDateTime(TimeZone.currentSystemDefault())
                     .let { LocalTime(it.hour, it.minute) }
@@ -95,8 +96,8 @@ fun LineRow(departure: Departure) {
 }
 
 @Composable
-fun LineNumberBox(departure: Departure) {
-    val icon = when (departure.transportationMode) {
+fun LineNumberBox(line: Line) {
+    val icon = when (line.transportationMode) {
         TransportationMode.AIR -> Icons.Default.AirplanemodeActive
         TransportationMode.BICYCLE -> Icons.Default.PedalBike
         TransportationMode.WATER -> Icons.Default.DirectionsBoat
@@ -111,8 +112,8 @@ fun LineNumberBox(departure: Departure) {
         else -> Icons.Default.QuestionMark
     }
 
-    val backgroundColor = departure.color ?: Color.Gray
-    val textColor = departure.textColor ?: Color.Black
+    val backgroundColor = line.color ?: Color.Gray
+    val textColor = line.textColor ?: Color.Black
 
     Row(
         modifier = Modifier
@@ -122,7 +123,7 @@ fun LineNumberBox(departure: Departure) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(icon, contentDescription = null, tint = textColor)
-        Text(departure.lineNumber ?: "", color = textColor)
+        Text(line.lineNumber ?: "", color = textColor)
     }
 }
 
@@ -130,17 +131,5 @@ fun LineNumberBox(departure: Departure) {
 @Preview(showBackground = true)
 fun LineRowPreview() {
     ReisTheme {
-        LineRow(
-            Departure(
-                lineNumber = "L14",
-                transportationMode = TransportationMode.RAIL,
-                destination = "Kongsvinger",
-                expectedDeparture = Clock.System.now(),
-                aimedDeparture = Clock.System.now(),
-                actualDeparture = Clock.System.now(),
-                color = Color("FFFF0000".toLong(16)),
-                textColor = Color("FF000000".toLong(16)),
-            )
-        )
     }
 }

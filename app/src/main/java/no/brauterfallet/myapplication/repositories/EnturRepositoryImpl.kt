@@ -3,30 +3,47 @@ package no.brauterfallet.myapplication.repositories
 import androidx.compose.ui.graphics.Color
 import no.brauterfallet.myapplication.datasources.GeocoderDataSource
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSource
-import no.brauterfallet.myapplication.dto.Venue
-import no.brauterfallet.myapplication.models.Departure
+import no.brauterfallet.myapplication.dto.DepartureDTO
+import no.brauterfallet.myapplication.dto.GeocoderFeature
+import no.brauterfallet.myapplication.dto.GeocoderVenue
+import no.brauterfallet.myapplication.mappers.VenueWithDeparturesMapper
 import no.brauterfallet.myapplication.models.TransportationMode
+import no.brauterfallet.myapplication.models.VenueWithDepartures
 
-class AppRepositoryImpl(
+class EnturRepositoryImpl(
     private val geoCoderDataSource: GeocoderDataSource,
     private val journeyPlannerDataSource: JourneyPlannerDataSource
-) : AppRepository {
-    override suspend fun getClosestVenue(latitude: Float, longitude: Float): Result<Venue> {
+) : EnturRepository {
+    override suspend fun getClosestVenue(
+        latitude: Double,
+        longitude: Double
+    ): Result<GeocoderVenue> {
         return geoCoderDataSource.getClosestVenue(latitude, longitude)
     }
 
-    override suspend fun getVenuesByTextQuery(query: String): Result<List<Venue>> {
+    override suspend fun getVenuesByTextQuery(query: String): Result<List<GeocoderVenue>> {
         return geoCoderDataSource.getVenuesByTextQuery(query)
     }
 
-    override suspend fun getDeparturesFromVenue(venueId: String): Result<List<Departure>> {
+    override suspend fun getClosestFeature(
+        latitude: Double,
+        longitude: Double
+    ): Result<GeocoderFeature> {
+        return geoCoderDataSource.getClosestFeature(latitude, longitude)
+    }
+
+    override suspend fun getFeaturesByTextQuery(query: String): Result<List<GeocoderFeature>> {
+        return geoCoderDataSource.getFeaturesByTextQuery(query)
+    }
+
+    override suspend fun getDeparturesFromVenue(venueId: String): Result<List<DepartureDTO>> {
         val departuresQuery = journeyPlannerDataSource.getDeparturesFromVenue(venueId).getOrElse {
             return Result.failure(it)
         }
 
         val stopPlace = departuresQuery.stopPlace ?: return Result.failure(NoSuchStopPlaceFound())
 
-        val departures = stopPlace.estimatedCalls.map { estimatedCall ->
+        val departureDTOS = stopPlace.estimatedCalls.map { estimatedCall ->
             val transportationMode = runCatching {
                 TransportationMode.valueOf(
                     value = estimatedCall.serviceJourney.journeyPattern?.line?.transportMode?.rawValue?.uppercase()
@@ -44,7 +61,7 @@ class AppRepositoryImpl(
                     Color("FF$colorString".toLong(16))
                 }
 
-            Departure(
+            DepartureDTO(
                 lineNumber = estimatedCall.serviceJourney.journeyPattern?.line?.publicCode,
                 transportationMode = transportationMode,
                 destination = estimatedCall.destinationDisplay?.frontText,
@@ -56,7 +73,16 @@ class AppRepositoryImpl(
             )
         }
 
-        return Result.success(departures)
+        return Result.success(departureDTOS)
+    }
+
+    override suspend fun getVenueWithDeparturesFromGeocoderFeature(feature: GeocoderFeature): Result<VenueWithDepartures> {
+        return runCatching {
+            val geocoderVenue = feature.properties
+            val departures = getDeparturesFromVenue(geocoderVenue.id).getOrThrow()
+
+            VenueWithDeparturesMapper.fromGeocoderFeatureAndDepartures(feature, departures)
+        }
     }
 }
 

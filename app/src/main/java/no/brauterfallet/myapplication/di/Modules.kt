@@ -14,8 +14,10 @@ import no.brauterfallet.myapplication.datasources.GeocoderDataSource
 import no.brauterfallet.myapplication.datasources.GeocoderDataSourceImpl
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSource
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSourceImpl
-import no.brauterfallet.myapplication.repositories.AppRepository
-import no.brauterfallet.myapplication.repositories.AppRepositoryImpl
+import no.brauterfallet.myapplication.repositories.EnturRepository
+import no.brauterfallet.myapplication.repositories.EnturRepositoryImpl
+import no.brauterfallet.myapplication.services.EnturService
+import no.brauterfallet.myapplication.services.EnturServiceImpl
 import no.brauterfallet.myapplication.services.LocationService
 import no.brauterfallet.myapplication.services.LocationServiceImpl
 import no.brauterfallet.myapplication.ui.screens.home.HomeScreenViewModel
@@ -51,9 +53,10 @@ fun appModule(fusedLocationProviderClient: FusedLocationProviderClient) = module
     singleOf(::GeocoderDataSourceImpl) { bind<GeocoderDataSource>() }
     singleOf(::JourneyPlannerDataSourceImpl) { bind<JourneyPlannerDataSource>() }
 
-    singleOf(::AppRepositoryImpl) { bind<AppRepository>() }
+    singleOf(::EnturRepositoryImpl) { bind<EnturRepository>() }
 
     singleOf(::LocationServiceImpl) { bind<LocationService>() }
+    singleOf(::EnturServiceImpl) { bind<EnturService>() }
 
     single { fusedLocationProviderClient }
 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -53,7 +54,6 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
     val scrollState = rememberScrollState()
 
     val venue by viewModel.venue.collectAsStateWithLifecycle()
-    val departures by viewModel.departures.collectAsStateWithLifecycle()
 
     PullToRefreshBox(
         isRefreshing = homeScreenState == HomeScreenState.IS_REFRESHING,
@@ -67,13 +67,22 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
         ) {
             when (homeScreenState) {
                 HomeScreenState.OK -> {
-                    VenueCard(
-                        venue,
-                        departures,
-                        modifier = Modifier
-                            .padding(16.dp, 4.dp)
-                            .fillMaxSize()
-                    )
+                    if (venue != null) {
+                        venue?.let {
+                            VenueCard(
+                                venue = it,
+                                modifier = Modifier
+                                    .padding(16.dp, 4.dp)
+                                    .fillMaxSize()
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "Noe gikk galt, pass på at du har nettverk og prøv igjen!",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                        )
+                    }
                 }
 
                 HomeScreenState.IS_LOADING,
@@ -84,14 +93,16 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeScreenViewModel = k
                 HomeScreenState.FETCHING_LOCATION_FAILED -> {
                     Text(
                         text = "Noe gikk galt, pass på at posisjon er skrudd på og prøv igjen!",
-                        modifier = Modifier.align(Alignment.Center)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
                     )
                 }
 
                 HomeScreenState.FETCHING_DATA_FAILED -> {
                     Text(
                         text = "Noe gikk galt, pass på at du har nettverk og prøv igjen!",
-                        modifier = Modifier.align(Alignment.Center)
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
                     )
                 }
             }

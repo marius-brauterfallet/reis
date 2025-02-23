@@ -4,17 +4,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GeocoderResponse(
-    val features: List<Feature>
+    val features: List<GeocoderFeature>
 )
 
 @Serializable
-data class Feature(
-    val properties: Venue,
-    val geometry: Geometry
+data class GeocoderFeature(
+    val properties: GeocoderVenue,
+    val geometry: GeocoderGeometry
 )
 
 @Serializable
-data class Venue(
+data class GeocoderVenue(
     val id: String,
     val name: String,
     val distance: Float? = null,
@@ -23,6 +23,6 @@ data class Venue(
 )
 
 @Serializable
-data class Geometry(
-    val coordinates: List<Float>
+data class GeocoderGeometry(
+    val coordinates: List<Double>
 )

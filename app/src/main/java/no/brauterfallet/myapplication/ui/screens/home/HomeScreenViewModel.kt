@@ -1,25 +1,22 @@
 package no.brauterfallet.myapplication.ui.screens.home
 
 import android.content.Context
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.brauterfallet.myapplication.dto.Venue
-import no.brauterfallet.myapplication.models.Departure
-import no.brauterfallet.myapplication.repositories.AppRepository
+import no.brauterfallet.myapplication.models.VenueWithDepartures
+import no.brauterfallet.myapplication.services.EnturService
 import no.brauterfallet.myapplication.services.LocationService
 
 class HomeScreenViewModel(
-    private val appRepository: AppRepository,
+    private val enturService: EnturService,
     private val locationService: LocationService
 ) : ViewModel() {
-    private val _venue = MutableStateFlow<Venue?>(null)
+    private val _venue = MutableStateFlow<VenueWithDepartures?>(null)
     val venue = _venue.asStateFlow()
-
-    private val _departures = MutableStateFlow<List<Departure>>(emptyList())
-    val departures = _departures.asStateFlow()
 
     private val _homeScreenState = MutableStateFlow(HomeScreenState.OK)
     val homeScreenState = _homeScreenState.asStateFlow()
@@ -40,22 +37,30 @@ class HomeScreenViewModel(
                 return@launch
             }
 
-            val closestVenue = appRepository.getClosestVenue(
-                location.latitude.toFloat(),
-                location.longitude.toFloat()
+            val venueWithDepartures = enturService.getClosestVenueWithDepartures(
+                location.latitude,
+                location.longitude
             ).getOrElse {
                 _homeScreenState.value = HomeScreenState.FETCHING_DATA_FAILED
                 return@launch
             }
 
-            _venue.value = closestVenue
+            val results = FloatArray(1)
+            Location.distanceBetween(
+                location.latitude,
+                location.longitude,
+                venueWithDepartures.latitude,
+                venueWithDepartures.longitude,
+                results
+            )
 
-            val departures = appRepository.getDeparturesFromVenue(closestVenue.id).getOrElse {
-                _homeScreenState.value = HomeScreenState.FETCHING_DATA_FAILED
-                return@launch
-            }
+            println("First coordinates: ${location.latitude}, ${location.longitude}")
+            println("Venue coordinates: ${venueWithDepartures.latitude}, ${venueWithDepartures.longitude}")
 
-            _departures.value = departures
+            val distance = results.first()
+            println("Distance: $distance m")
+
+            _venue.value = venueWithDepartures.copy(distance = results.first())
             _homeScreenState.value = HomeScreenState.OK
         }
     }

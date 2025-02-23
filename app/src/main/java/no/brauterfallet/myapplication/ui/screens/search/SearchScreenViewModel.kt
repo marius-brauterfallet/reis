@@ -7,16 +7,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import no.brauterfallet.myapplication.dto.Venue
-import no.brauterfallet.myapplication.models.Departure
-import no.brauterfallet.myapplication.repositories.AppRepository
+import no.brauterfallet.myapplication.models.Venue
+import no.brauterfallet.myapplication.models.VenueWithDepartures
+import no.brauterfallet.myapplication.services.EnturService
 
-class SearchScreenViewModel(private val appRepository: AppRepository) : ViewModel() {
+class SearchScreenViewModel(
+    private val enturService: EnturService
+) : ViewModel() {
     private val _selectedVenue = MutableStateFlow<Venue?>(null)
     val selectedVenue = _selectedVenue.asStateFlow()
 
-    private val _departures = MutableStateFlow<List<Departure>>(emptyList())
-    val departures = _departures.asStateFlow()
+    private val _venueWithDepartures = MutableStateFlow<VenueWithDepartures?>(null)
+    val venueWithDepartures = _venueWithDepartures.asStateFlow()
 
     private val _searchResultVenues = MutableStateFlow<List<Venue>>(emptyList())
     val searchResultVenues = _searchResultVenues.asStateFlow()
@@ -27,8 +29,8 @@ class SearchScreenViewModel(private val appRepository: AppRepository) : ViewMode
     private val _expanded = MutableStateFlow(false)
     val expanded = _expanded.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    private val _screenState = MutableStateFlow(SearchScreenState.OK)
+    val screenState = _screenState.asStateFlow()
 
     fun onExpandedChange(value: Boolean) {
         _expanded.value = value
@@ -45,28 +47,29 @@ class SearchScreenViewModel(private val appRepository: AppRepository) : ViewMode
         _searchResultVenues.value = emptyList()
         _expanded.value = false
         _selectedVenue.value = venue
+        _screenState.value = SearchScreenState.IS_LOADING_DEPARTURES
 
-        refreshDepartures()
+        loadVenueWithDepartures()
     }
 
     fun onRefresh() {
-        refreshDepartures()
+        _screenState.value = SearchScreenState.IS_REFRESHING
+        loadVenueWithDepartures()
     }
 
-    private fun refreshDepartures() {
-        _selectedVenue.value?.let { venue ->
-            _isLoading.value = true
+    private fun loadVenueWithDepartures() {
+        val venue = _selectedVenue.value ?: return
 
-            viewModelScope.launch {
-                _departures.value =
-                    appRepository.getDeparturesFromVenue(venue.id).getOrDefault(emptyList())
-
-                _isLoading.value = false
+        viewModelScope.launch {
+            runCatching {
+                _venueWithDepartures.value = enturService.getVenueWithDepartures(venue).getOrThrow()
+                _screenState.value = SearchScreenState.OK
             }
         }
     }
 
     private var currentQueryJob: Job? = null
+
     private fun getVenuesByTextQuery(query: String) {
         currentQueryJob?.cancel()
 
@@ -79,7 +82,9 @@ class SearchScreenViewModel(private val appRepository: AppRepository) : ViewMode
             // Delaying for half a second, to avoid making necessary API calls
             delay(500)
             _searchResultVenues.value =
-                appRepository.getVenuesByTextQuery(query).getOrDefault(emptyList())
+                enturService.getVenuesByQuery(query).getOrDefault(emptyList())
+
+            // TODO: Add distance
         }
     }
 }

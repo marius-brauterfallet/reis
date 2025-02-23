@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import no.brauterfallet.myapplication.dto.Venue
+import no.brauterfallet.myapplication.models.Venue
 
 @Composable
 fun SearchResult(venue: Venue, onClick: (Venue) -> Unit, modifier: Modifier = Modifier) {

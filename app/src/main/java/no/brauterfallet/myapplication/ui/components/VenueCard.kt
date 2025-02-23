@@ -12,25 +12,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.Clock
-import no.brauterfallet.myapplication.dto.Venue
-import no.brauterfallet.myapplication.models.Departure
-import no.brauterfallet.myapplication.models.TransportationMode
+import no.brauterfallet.myapplication.models.VenueWithDepartures
 import no.brauterfallet.myapplication.ui.theme.ReisTheme
 import kotlin.math.roundToInt
 
 @Composable
 fun VenueCard(
-    venue: Venue?,
-    departures: List<Departure>,
+    venue: VenueWithDepartures,
     modifier: Modifier = Modifier
 ) {
-    val distanceString = venue?.distance?.let { distance ->
-        if (distance > 1) "(%.1f km)".format(distance)
-        else "(${(distance * 1000).roundToInt()} m)"
+    val distanceString = venue.distance?.let { distance ->
+        if (distance >= 1000) "(%.1f km)".format(distance / 1000f)
+        else "(${(distance).roundToInt()} m)"
     } ?: ""
 
     Card(modifier = modifier.fillMaxWidth()) {
@@ -39,8 +34,6 @@ fun VenueCard(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (venue == null) return@Column
-
             Row(
                 modifier = Modifier.align(Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
@@ -52,7 +45,7 @@ fun VenueCard(
 
             HorizontalDivider()
 
-            departures.forEach { departure -> LineRow(departure) }
+            venue.lines.forEach { line -> LineRow(line) }
         }
     }
 }
@@ -61,30 +54,6 @@ fun VenueCard(
 @Preview(showBackground = true)
 fun VenueCardPreview() {
     ReisTheme {
-        VenueCard(
-            venue = Venue("", "Jernbanetorget", 1.1534f, "venue", "Jernbanetorget, Oslo"),
-            departures = listOf(
-                Departure(
-                    lineNumber = "L14",
-                    transportationMode = TransportationMode.RAIL,
-                    destination = "Kongsvinger",
-                    expectedDeparture = Clock.System.now(),
-                    aimedDeparture = Clock.System.now(),
-                    actualDeparture = Clock.System.now(),
-                    color = Color("FFFF0000".toLong(16)),
-                    textColor = Color("FF000000".toLong(16)),
-                ),
-                Departure(
-                    lineNumber = "L14",
-                    transportationMode = TransportationMode.RAIL,
-                    destination = "Asker",
-                    expectedDeparture = Clock.System.now(),
-                    aimedDeparture = Clock.System.now(),
-                    actualDeparture = Clock.System.now(),
-                    color = Color("FFFF0000".toLong(16)),
-                    textColor = Color("FF000000".toLong(16))
-                )
-            )
-        )
+//        VenueCard()
     }
 }
