@@ -54,11 +54,7 @@ class HomeScreenViewModel(
                 results
             )
 
-            println("First coordinates: ${location.latitude}, ${location.longitude}")
-            println("Venue coordinates: ${venueWithDepartures.latitude}, ${venueWithDepartures.longitude}")
-
             val distance = results.first()
-            println("Distance: $distance m")
 
             _venue.value = venueWithDepartures.copy(distance = results.first())
             _homeScreenState.value = HomeScreenState.OK

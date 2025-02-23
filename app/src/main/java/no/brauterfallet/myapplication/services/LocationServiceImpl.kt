@@ -26,4 +26,23 @@ class LocationServiceImpl : LocationService {
                 .addOnFailureListener { exception -> continuation.resumeWithException(exception) }
 
         }
+
+    override fun getDistance(
+        latitude1: Double,
+        longitude1: Double,
+        latitude2: Double,
+        longitude2: Double
+    ): Float {
+        val results = FloatArray(1)
+
+        Location.distanceBetween(
+            latitude1,
+            longitude1,
+            latitude2,
+            longitude2,
+            results
+        )
+
+        return results.first()
+    }
 }

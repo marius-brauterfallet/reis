@@ -13,7 +13,10 @@ class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataS
         const val GEOCODER_URL = "https://api.entur.io/geocoder/v1"
     }
 
-    override suspend fun getClosestVenue(latitude: Double, longitude: Double): Result<GeocoderVenue> {
+    override suspend fun getClosestVenue(
+        latitude: Double,
+        longitude: Double
+    ): Result<GeocoderVenue> {
         return runCatching {
             httpClient.get(GEOCODER_URL) {
                 url {
@@ -39,7 +42,7 @@ class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataS
                     parameters.append("layers", "venue")
                 }
             }.body<GeocoderResponse>().features.map { feature -> feature.properties }
-        }.onFailure { println(it) }
+        }
     }
 
     override suspend fun getClosestFeature(
@@ -71,6 +74,6 @@ class GeocoderDataSourceImpl(private val httpClient: HttpClient) : GeocoderDataS
                     parameters.append("layers", "venue")
                 }
             }.body<GeocoderResponse>().features
-        }.onFailure { println(it) }
+        }
     }
 }

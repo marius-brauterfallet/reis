@@ -1,8 +1,12 @@
 package no.brauterfallet.myapplication.ui.screens.search
 
+import android.content.Context
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,9 +14,11 @@ import kotlinx.coroutines.launch
 import no.brauterfallet.myapplication.models.Venue
 import no.brauterfallet.myapplication.models.VenueWithDepartures
 import no.brauterfallet.myapplication.services.EnturService
+import no.brauterfallet.myapplication.services.LocationService
 
 class SearchScreenViewModel(
-    private val enturService: EnturService
+    private val enturService: EnturService,
+    private val locationService: LocationService
 ) : ViewModel() {
     private val _selectedVenue = MutableStateFlow<Venue?>(null)
     val selectedVenue = _selectedVenue.asStateFlow()
@@ -36,10 +42,10 @@ class SearchScreenViewModel(
         _expanded.value = value
     }
 
-    fun onQueryChange(query: String) {
+    fun onQueryChange(query: String, context: Context) {
         _query.value = query
 
-        getVenuesByTextQuery(query)
+        getVenuesByTextQuery(query, context)
     }
 
     fun onVenueClick(venue: Venue) {
@@ -70,7 +76,7 @@ class SearchScreenViewModel(
 
     private var currentQueryJob: Job? = null
 
-    private fun getVenuesByTextQuery(query: String) {
+    private fun getVenuesByTextQuery(query: String, context: Context) {
         currentQueryJob?.cancel()
 
         if (query.isEmpty()) {
@@ -81,10 +87,28 @@ class SearchScreenViewModel(
         currentQueryJob = viewModelScope.launch {
             // Delaying for half a second, to avoid making necessary API calls
             delay(500)
-            _searchResultVenues.value =
+            val deferredLocation = async { locationService.getLocation(context) }
+            val deferredSearchResults = async {
                 enturService.getVenuesByQuery(query).getOrDefault(emptyList())
+            }
 
-            // TODO: Add distance
+            val location = deferredLocation.await()
+            val searchResults = deferredSearchResults.await()
+
+            if (location == null) {
+                _searchResultVenues.value = searchResults
+                return@launch
+            }
+
+            _searchResultVenues.value = searchResults.map { venue ->
+                val distance = locationService.getDistance(
+                    location.latitude,
+                    location.longitude,
+                    venue.latitude,
+                    venue.longitude
+                )
+                venue.copy(distance = distance)
+            }
         }
     }
 }
