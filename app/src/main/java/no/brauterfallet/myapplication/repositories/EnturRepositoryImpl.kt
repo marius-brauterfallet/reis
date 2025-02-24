@@ -5,7 +5,6 @@ import no.brauterfallet.myapplication.datasources.GeocoderDataSource
 import no.brauterfallet.myapplication.datasources.JourneyPlannerDataSource
 import no.brauterfallet.myapplication.dto.DepartureDTO
 import no.brauterfallet.myapplication.dto.GeocoderFeature
-import no.brauterfallet.myapplication.dto.GeocoderVenue
 import no.brauterfallet.myapplication.mappers.VenueWithDeparturesMapper
 import no.brauterfallet.myapplication.models.TransportationMode
 import no.brauterfallet.myapplication.models.VenueWithDepartures
@@ -14,17 +13,6 @@ class EnturRepositoryImpl(
     private val geoCoderDataSource: GeocoderDataSource,
     private val journeyPlannerDataSource: JourneyPlannerDataSource
 ) : EnturRepository {
-    override suspend fun getClosestVenue(
-        latitude: Double,
-        longitude: Double
-    ): Result<GeocoderVenue> {
-        return geoCoderDataSource.getClosestVenue(latitude, longitude)
-    }
-
-    override suspend fun getVenuesByTextQuery(query: String): Result<List<GeocoderVenue>> {
-        return geoCoderDataSource.getVenuesByTextQuery(query)
-    }
-
     override suspend fun getClosestFeature(
         latitude: Double,
         longitude: Double
