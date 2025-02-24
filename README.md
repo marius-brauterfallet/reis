@@ -1,6 +1,6 @@
 # Reis
 
-Appen benytter seg av MVVM, og strukturerer således all kode knyttet til views i skjermer og komponenter, mens business-logikk er håndtert av viewmodels og services. Jeg vil si mappestrukturen i stor grad er ganske selvforklarende.
+Appen benytter seg av MVVM, og strukturerer således all kode knyttet til views i screens og components under "ui"-mappa, mens business-logikk er håndtert av viewmodels og services. Jeg vil si mappestrukturen i stor grad er ganske selvforklarende.
 
 For vanlige REST-kall har jeg benyttet meg av Ktor Client, og for dependency injection har jeg brukt Koin. Disse bibliotekene valgte jeg, rett og slett fordi jeg er mest kjent med dem, og jeg synes de er enklere å forholde seg til enn andre alternativer som Dagger-Hilt og Retrofit. Ellers har jeg brukt Googles Accompanist for å håndtere rettigheter knyttet til henting av posisjon.
 
@@ -12,4 +12,4 @@ Dersom jeg skulle brukt mer tid på appen, ville jeg implementert en mer robust 
 
 Jeg kunne også tenkt meg å cache søk gjort av brukeren, så de 3 seneste stoppene brukeren har søkt på kom opp øverst, eller eventuelt vist de nærmeste stoppene i toppen av søkevinduet.
 
-Annet enn dette, ville jeg nok dokumentert funksjoner og slikt bedre, samt skrevet enhets- og integrasjonstester, men ellers er det ikke en så omfattende app at jeg føler det er så mye å si. Både GraphQL og henting av posisjon var ting som var ganske nytt for meg, men alt i alt, vil jeg si jeg er passe fornøyd med det jeg har gjort her.
+Annet enn dette, ville jeg nok dokumentert funksjoner og slikt bedre, samt skrevet enhets- og integrasjonstester, men ellers er det ikke en så omfattende app at jeg føler det er så mye å si. I tillegg ville jeg ryddet litt opp i lagene. Ansvarsområdene er nå litt blandet mellom datakildene, EnturRepository og EnturService. Både GraphQL og henting av posisjon var ting som var ganske nytt for meg, men alt i alt, vil jeg si jeg er passe fornøyd med det jeg har gjort her.
